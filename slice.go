@@ -687,3 +687,21 @@ type Number interface {
 		~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64 | ~uintptr |
 		~float32 | ~float64
 }
+
+// GroupBy groups elements of the slice by a key returned by the given function.
+// It returns a map where keys are the results of the function and values are slices of elements
+// that share the same key.
+// The order of elements within each group is preserved from the original slice.
+func (s Slice[T]) GroupBy(fn func(T) interface{}) map[interface{}]Slice[T] {
+	if len(s) == 0 {
+		return make(map[interface{}]Slice[T])
+	}
+
+	groups := make(map[interface{}]Slice[T])
+	for _, v := range s {
+		key := fn(v)
+		groups[key] = append(groups[key], v)
+	}
+
+	return groups
+}
